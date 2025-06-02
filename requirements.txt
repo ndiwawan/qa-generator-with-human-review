@@ -1,0 +1,6 @@
+# Core dependencies
+openai>=1.0.0
+pyyaml>=6.0
+
+# For human review
+label-studio>=1.18.0

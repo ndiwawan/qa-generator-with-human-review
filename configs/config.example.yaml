@@ -1,0 +1,14 @@
+# Configuration for QA Generator
+# Copy this file to config.yaml and configure your LLM provider
+
+# LLM API configuration
+api-endpoint:
+  api_base: "https://api.openai.com/v1"
+  api_key: "your-api-key-here"  # Replace with your actual API key
+  model: "gpt-4o-mini"  # Options: gpt-4o-mini, gpt-4, gpt-3.5-turbo
+
+# Generation settings
+generation:
+  temperature: 0.7      # Higher = more creative, lower = more deterministic
+  chunk_size: 2000      # Size of text chunks for processing
+  num_pairs: 5          # Number of QA pairs to generate per chunk
