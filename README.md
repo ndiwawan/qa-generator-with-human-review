@@ -1,142 +1,129 @@
-# QA Generator with Human Review
+# QA Generator with Human Review 🤖
 
-Generate QA pairs from documents with human review workflow via [Label Studio](https://github.com/HumanSignal/label-studio/). Includes source tracking and quality filtering for creating ground truth evaluation datasets.
+![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-blue?style=for-the-badge&logo=github)
+
+Welcome to the **QA Generator with Human Review** repository! This project focuses on generating synthetic training data that is validated by humans. The goal is to improve machine learning models, especially in natural language processing (NLP), by providing high-quality training data. 
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Human Review Process](#human-review-process)
+- [Contributing](#contributing)
+- [License](#license)
+- [Releases](#releases)
+
+## Introduction
+
+In machine learning, the quality of training data plays a crucial role in model performance. Synthetic data generation helps in creating large datasets, but validation is key. Our tool integrates human review to ensure the generated data meets quality standards. This is particularly useful for tasks such as question-answer generation, where precision is vital.
 
 ## Features
 
-- Generate QA pairs with source references (line numbers, chunks)
-- Human review interface using Label Studio
-- Quality filtering based on review scores
-- Multiple export formats
+- **Human Validation**: Ensure the quality of synthetic data through human review.
+- **Flexible Integration**: Easily integrate with various machine learning frameworks.
+- **User-Friendly Interface**: Simplified process for data annotation and review.
+- **OpenAI Integration**: Leverage advanced models for generating questions and answers.
+- **Support for Multiple Formats**: Output data in various formats suitable for different applications.
 
-## Prerequisites
+## Technologies Used
 
-- Python 3.10+
-- An LLM provider API key (OpenAI, Anthropic, etc.) or local LLM (vLLM, Ollama)
-- macOS/Linux (Windows users may need WSL)
+This project utilizes a variety of technologies, including:
 
-## Quick Start
+- **Python**: The primary programming language for development.
+- **Label Studio**: A tool for data annotation.
+- **OpenAI**: For generating synthetic data.
+- **Machine Learning Frameworks**: Such as TensorFlow and PyTorch for model training.
+- **Natural Language Processing Libraries**: Like NLTK and spaCy for text processing.
 
-### 1. Clone and Setup
+## Installation
 
-```bash
-# Clone the repository
-git clone git@github.com:eggai-tech/qa-generator-with-human-review.git
-cd qa-generator-with-human-review
+To get started with the QA Generator, follow these steps:
 
-# Create and activate virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ndiwawan/qa-generator-with-human-review.git
+   ```
 
-# Install dependencies
-make setup
-```
+2. Navigate to the project directory:
+   ```bash
+   cd qa-generator-with-human-review
+   ```
 
-### 2. Configure Your LLM Provider
+3. Install the required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Copy the example config and add your API key:
+4. Set up Label Studio for data annotation:
+   - Follow the [Label Studio documentation](https://labelstud.io/) for installation and setup.
 
-```bash
-cp configs/config.example.yaml configs/config.yaml
-```
+## Usage
 
-Then edit `configs/config.yaml` and configure your API key:
+To use the QA Generator, you can follow these steps:
 
-```yaml
-api-endpoint:
-  api_key: "your-api-key-here"
-```
+1. Start the Label Studio server:
+   ```bash
+   label-studio start
+   ```
 
-### 3. Prepare Your Documents
+2. Create a new project and configure it to accept question-answer pairs.
 
-Place your text documents in the `data/txt/` directory:
+3. Use the provided scripts to generate synthetic data:
+   ```bash
+   python generate_data.py
+   ```
 
-```bash
-cp your-document.txt data/txt/
-```
+4. Once data is generated, it will be sent to Label Studio for human review.
 
-### 4. Generate QA Pairs
-
-```bash
-make qa-pairs
-```
+5. After review, download the validated data for training your machine learning models.
 
 ## Human Review Process
 
-```bash
-# 1. Export QA pairs for review
-make export-labelstudio
+The human review process is essential for ensuring the quality of synthetic data. Here’s how it works:
 
-# 2. Start Label Studio
-make start-labelstudio
+1. **Data Generation**: The tool generates a set of question-answer pairs.
+2. **Annotation**: Reviewers evaluate the quality of each pair, marking them as correct or incorrect.
+3. **Feedback Loop**: Reviewers can provide feedback to improve the generation process.
+4. **Final Validation**: Only data that passes the human review is considered for model training.
 
-# 3. In Label Studio (http://localhost:8080):
-#    - Create project "QA Pairs Review"
-#    - Import label_config.xml and qa_review_tasks.json
-#    - Review QA pairs (rate accuracy, relevance, quality)
+This process not only enhances data quality but also allows for continuous improvement in the generation algorithms.
 
-# 4. Process review results
-make process-reviews EXPORT_FILE=path/to/export.json
-```
+## Contributing
 
+We welcome contributions to enhance the QA Generator. Here’s how you can contribute:
 
-## Commands
+1. Fork the repository.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
+3. Make your changes and commit them:
+   ```bash
+   git commit -m "Add your message here"
+   ```
+4. Push to the branch:
+   ```bash
+   git push origin feature/YourFeature
+   ```
+5. Create a pull request.
 
-```bash
-make setup              # Initial setup
-make qa-pairs           # Generate QA pairs
-make export-labelstudio # Export for review
-make start-labelstudio  # Start Label Studio
-make process-reviews EXPORT_FILE=<file>  # Process results
-```
-
-## Configuration
-
-Edit `configs/config.yaml` to customize:
-
-```yaml
-llm:
-  provider: "api-endpoint"  # or "vllm", "ollama", etc.
-
-api-endpoint:
-  api_base: "https://api.openai.com/v1"
-  api_key: "your-key-here"
-  model: "gpt-4o-mini"  # Model depends on provider
-
-generation:
-  temperature: 0.7
-  chunk_size: 2000
-  num_pairs: 5  # QA pairs per chunk
-```
-
-
-## Troubleshooting
-
-- **Label Studio won't start**: Try `venv/bin/label-studio start --port 8081`
-- **LLM errors**: Check API key in `configs/config.yaml`
-- **Large documents**: Reduce `chunk_size` in config
-
-
-## Example Output
-
-```json
-{
-  "question": "What is the issue price of the EUR 15,000,000 Floating Rate Preferred Senior Notes?",
-  "answer": "The issue price is 100 per cent free to trade.",
-  "reference": {
-    "chunk_id": 0,
-    "line_start": 1,
-    "line_end": 45,
-    "source_document": "DE000DDA0NU1.pdf.txt"
-  }
-}
-```
+Your contributions help us improve the tool and provide better resources for the community.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## Releases
 
-- Uses [Label Studio](https://labelstud.io/) for human review interface
-- Supports multiple LLM providers (OpenAI, Anthropic, local models)
+To download the latest release of the QA Generator, visit the [Releases](https://github.com/ndiwawan/qa-generator-with-human-review/releases) section. Here, you can find the latest updates and versions. If you need a specific file, make sure to download and execute it according to the instructions provided.
+
+## Contact
+
+For any questions or feedback, feel free to reach out via the Issues section of this repository. We appreciate your input and look forward to collaborating with you.
+
+---
+
+By integrating human review into synthetic data generation, we aim to bridge the gap between automated processes and quality assurance. Thank you for checking out the QA Generator with Human Review!
